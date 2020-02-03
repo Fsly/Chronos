@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/item_chat"
+        android:icon="@mipmap/chat_2"
+        android:title="@string/chat"/>
+    <item
+        android:id="@+id/item_rank"
+        android:icon="@mipmap/rank_2"
+        android:title="@string/rank" />
+
+    <item
+        android:id="@+id/item_schedule"
+        android:icon="@mipmap/schedule_2"
+        android:title="@string/schedule" />
+
+    <item
+        android:id="@+id/item_clock"
+        android:icon="@mipmap/clock_2"
+        android:title="@string/clock" />
+
+    <item
+        android:id="@+id/item_plan"
+        android:icon="@mipmap/plan_2"
+        android:title="@string/plan" />
+
+</menu>

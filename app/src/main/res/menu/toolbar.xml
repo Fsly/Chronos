@@ -1,0 +1,19 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/add_friend"
+        android:title="添加好友"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/add_group"
+        android:title="新建群组"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/add_clock"
+        android:title="新建闹钟"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/add_plan"
+        android:title="新建计划"
+        app:showAsAction="never" />
+</menu>

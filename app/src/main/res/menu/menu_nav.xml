@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group
+        android:checkableBehavior="single"
+        >
+        <item
+            android:id="@+id/nav_inbox"
+            android:icon="@android:drawable/sym_action_email"
+            android:title="好友"
+            android:checked="true"
+            />
+        <item
+            android:id="@+id/nav_drafts"
+            android:icon="@android:drawable/ic_menu_edit"
+            android:title="群组"
+            />
+        <item
+            android:id="@+id/nav_sent"
+            android:icon="@android:drawable/ic_menu_send"
+            android:title="游戏"
+            />
+        <item
+            android:id="@+id/nav_trash"
+            android:icon="@android:drawable/ic_menu_delete"
+            android:title="主题"
+            />
+    </group>
+
+    <item
+        android:title="其他"
+        >
+        <menu>
+            <item
+                android:id="@+id/nav_help"
+                android:icon="@android:drawable/ic_menu_help"
+                android:title="免广告"
+                />
+            <item
+                android:id="@+id/nav_feedback"
+                android:icon="@android:drawable/sym_action_email"
+                android:title="偏好设置"
+                />
+        </menu>
+    </item>
+
+</menu>

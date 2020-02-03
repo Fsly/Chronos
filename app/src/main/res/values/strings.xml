@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Chronos</string>
+    <string name="chat">聊天</string>
+    <string name="rank">排行</string>
+    <string name="schedule">周历</string>
+    <string name="clock">闹钟</string>
+    <string name="plan">计划</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="fragment">fragment</string>
+    <string name="user_name">user</string>
+
+    <string name="nav_open_drawer">Open navigation drawer</string>
+    <string name="nav_close_drawer">Close navigation drawer</string>
+</resources>
