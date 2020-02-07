@@ -1,17 +1,17 @@
 package com.example.chronos;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.chronos.adapter.ViewPagerAdapter;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
-
-import java.lang.reflect.Method;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -62,9 +62,10 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();//使工具条(Toolbar)上的图标与抽屉的状态同步，单机图标打开抽屉时图标会改变
 
         //把活动注册为抽屉导航的监听器（单击选项时活动会得到通知）
-        navigationView =findViewById(R.id.nav_view);
+        navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        //底部导航栏点击事件
         bottomNavigationView.setOnNavigationItemSelectedListener(
                 new BottomNavigationView.OnNavigationItemSelectedListener() {
                     @Override
@@ -90,6 +91,7 @@ public class MainActivity extends AppCompatActivity
                     }
                 });
 
+        //viewPager翻页事件
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -114,6 +116,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        //填充view
         setupViewPager(viewPager);
 
         //改左上角导航图标
@@ -128,6 +131,17 @@ public class MainActivity extends AppCompatActivity
         //跳至第三页
         bottomNavigationView.getMenu().getItem(2).setChecked(true);
         viewPager.setCurrentItem(2);
+
+        //跳转登录界面
+        View headerLayout = navigationView.getHeaderView(0);
+        TextView userText = headerLayout.findViewById(R.id.nav_header_userText);
+        userText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     //工具栏溢出区
@@ -141,7 +155,7 @@ public class MainActivity extends AppCompatActivity
     //按下后退按钮
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -186,20 +200,23 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         int id = menuItem.getItemId();
         switch (id) {
-            case R.id.nav_drafts:
+            case R.id.nav_friend:
                 Toast.makeText(this, "我是第一个", Toast.LENGTH_SHORT).show();
                 break;
-            case R.id.nav_sent:
+            case R.id.nav_group:
                 Toast.makeText(this, "我是第二个", Toast.LENGTH_SHORT).show();
                 break;
-            case R.id.nav_trash:
+            case R.id.nav_game:
                 Toast.makeText(this, "我是第三个", Toast.LENGTH_SHORT).show();
                 break;
-            case R.id.nav_help:
+            case R.id.nav_theme:
                 Toast.makeText(this, "我是第四个", Toast.LENGTH_SHORT).show();
                 break;
-            case R.id.nav_feedback:
+            case R.id.nav_ad:
                 Toast.makeText(this, "我是第五个", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.nav_setting:
+                Toast.makeText(this, "我是第六个", Toast.LENGTH_SHORT).show();
                 break;
             default:
         }
