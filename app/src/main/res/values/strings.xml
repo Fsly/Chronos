@@ -13,4 +13,7 @@
 
     <string name="nav_open_drawer">Open navigation drawer</string>
     <string name="nav_close_drawer">Close navigation drawer</string>
+    <string name="register">注册</string>
+    <string name="login">登录</string>
+    <string name="login_has_account">已有帐号？直接登录</string>
 </resources>
