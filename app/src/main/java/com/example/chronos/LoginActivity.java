@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.chronos.connect.Connect;
 import com.example.chronos.ui.ClearableEditTextWithIcon;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -181,9 +182,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnKeyListen
         }
         ProgressDialog dialog = ProgressDialog.show(this, "提示", "注册中\u2026", false);
         // 注册流程
-        String account = registerAccountEdit.getText().toString();
-        String nickName = registerNickNameEdit.getText().toString();
-        String password = registerPasswordEdit.getText().toString();
+        final String account = registerAccountEdit.getText().toString();
+        final String nickName = registerNickNameEdit.getText().toString();
+        final String password = registerPasswordEdit.getText().toString();
+
+        new Thread(new Runnable(){
+            @Override
+            public void run() {
+                Connect connect = new Connect();
+                boolean isReg = connect.register(account, nickName, password);
+                Log.d("LoginActivity", "注册结果：" + isReg);
+            }
+        }).start();
 
         //如果注册成功
         Toast.makeText(LoginActivity.this, "注册成功", Toast.LENGTH_SHORT).show();
