@@ -2,6 +2,8 @@ package com.example.chronos;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
@@ -11,8 +13,12 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.chronos.common.ToastHelper;
 import com.example.chronos.connect.Connect;
+import com.example.chronos.database.LoginUser;
 import com.example.chronos.ui.ClearableEditTextWithIcon;
+
+import org.litepal.LitePal;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -149,19 +155,66 @@ public class LoginActivity extends AppCompatActivity implements View.OnKeyListen
         // 这里为了简便起见，demo就直接使用了密码的md5作为token。
         // 如果开发者直接使用这个demo，只更改appkey，然后就登入自己的账户体系的话，需要传入同步到云信服务器的token，而不是用户密码。
         final String account = loginAccountEdit.getEditableText().toString().toLowerCase();
-        final String token = loginPasswordEdit.getEditableText().toString();
+        final String password = loginPasswordEdit.getEditableText().toString();
+        final ProgressDialog dialog = ProgressDialog.show(LoginActivity.this, "提示", "登录中\u2026", false);
 
-        // 登录
-        Log.i("LoginActivity", "login success");
+        //注册成功，切换回登录，修改UI
+        final Runnable loginSuccess = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    // 登录
+                    Log.i("LoginActivity", "login success");
+
+                    // 初始化消息提醒配置
+                    initNotificationConfig();
+
+                    // 进入主界面
+                    finish();
+
+                    ToastHelper.showToast(LoginActivity.this, "登录成功");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        final Runnable loginFail = new Runnable() {
+            @Override
+            public void run() {
+                ToastHelper.showToast(LoginActivity.this, "用户名或密码错误");
+            }
+        };
 
         //保存用户名
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Connect connect = new Connect();
+                boolean isReg = connect.login(account, password);
+                Log.d("LoginActivity", "登录结果：" + isReg);
+                if (dialog.isShowing()) dialog.dismiss();
 
-        // 初始化消息提醒配置
-        initNotificationConfig();
+                if (isReg) {
+                    String nickName = connect.getUserData(account, password);
+                    localDataGet(account, nickName);
+                    new Handler(Looper.getMainLooper()).post(loginSuccess);
+                } else {
+                    new Handler(Looper.getMainLooper()).post(loginFail);
+                }
+            }
+        }).start();
+    }
 
-        // 进入主界面
-
-        finish();
+    //登录数据记录
+    private void localDataGet(String account,String nickName) {
+        LitePal.getDatabase();
+        LoginUser user=new LoginUser();
+        LitePal.deleteAll(LoginUser.class);
+        user.setAccount(account);
+        user.setNickName(nickName);
+        user.setStatus(true);
+        user.save();
     }
 
     private void initNotificationConfig() {
@@ -180,30 +233,69 @@ public class LoginActivity extends AppCompatActivity implements View.OnKeyListen
         if (!checkRegisterContentValid()) {
             return;
         }
-        ProgressDialog dialog = ProgressDialog.show(this, "提示", "注册中\u2026", false);
         // 注册流程
         final String account = registerAccountEdit.getText().toString();
         final String nickName = registerNickNameEdit.getText().toString();
         final String password = registerPasswordEdit.getText().toString();
+        final ProgressDialog dialog = ProgressDialog.show(LoginActivity.this, "提示", "注册中\u2026", false);
 
-        new Thread(new Runnable(){
+        //注册成功，切换回登录，修改UI
+        final Runnable switchBack = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    switchMode();  // 切换回登录
+                    loginAccountEdit.setText(account);
+                    loginPasswordEdit.setText(password);
+                    registerAccountEdit.setText("");
+                    registerNickNameEdit.setText("");
+                    registerPasswordEdit.setText("");
+
+                    ToastHelper.showToast(LoginActivity.this, "注册成功");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        final Runnable same = new Runnable() {
+            @Override
+            public void run() {
+                ToastHelper.showToast(LoginActivity.this, "账号已存在");
+            }
+        };
+
+        final Runnable failRegister = new Runnable() {
+            @Override
+            public void run() {
+                ToastHelper.showToast(LoginActivity.this, "注册失败");
+            }
+        };
+
+        new Thread(new Runnable() {
             @Override
             public void run() {
                 Connect connect = new Connect();
-                boolean isReg = connect.register(account, nickName, password);
+                int isReg = connect.register(account, nickName, password);
                 Log.d("LoginActivity", "注册结果：" + isReg);
+                if (dialog.isShowing()) dialog.dismiss();
+
+                switch (isReg) {
+                    case 1:
+                        //如果注册成功
+                        new Handler(Looper.getMainLooper()).post(switchBack);
+                        break;
+                    case 2:
+                        new Handler(Looper.getMainLooper()).post(same);
+                        break;
+                    case 0:
+                        new Handler(Looper.getMainLooper()).post(failRegister);
+                        break;
+                    default:
+                        break;
+                }
             }
         }).start();
-
-        //如果注册成功
-        Toast.makeText(LoginActivity.this, "注册成功", Toast.LENGTH_SHORT).show();
-        switchMode();  // 切换回登录
-        loginAccountEdit.setText(account);
-        loginPasswordEdit.setText(password);
-        registerAccountEdit.setText("");
-        registerNickNameEdit.setText("");
-        registerPasswordEdit.setText("");
-        if (dialog.isShowing()) dialog.dismiss();
     }
 
     private boolean checkRegisterContentValid() {

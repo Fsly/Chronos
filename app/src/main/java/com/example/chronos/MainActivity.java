@@ -10,8 +10,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.chronos.adapter.ViewPagerAdapter;
+import com.example.chronos.database.LoginUser;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
+
+import org.litepal.LitePal;
+
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -22,7 +27,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.viewpager.widget.ViewPager;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener{
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     static String[] FUNCTION = {"聊天", "排行", "周历", "闹钟", "计划"};
 
@@ -39,6 +44,11 @@ public class MainActivity extends AppCompatActivity
 
     //抽屉导航栏
     private NavigationView navigationView;
+
+    private TextView userNameText;
+    private TextView userAccountText;
+
+    private boolean haveLogin = false; // 是否已经登录
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +74,10 @@ public class MainActivity extends AppCompatActivity
         //把活动注册为抽屉导航的监听器（单击选项时活动会得到通知）
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        View headerLayout = navigationView.getHeaderView(0);
+        userNameText = headerLayout.findViewById(R.id.nick_name);
+        userAccountText = headerLayout.findViewById(R.id.nav_header_userText);
 
         //底部导航栏点击事件
         bottomNavigationView.setOnNavigationItemSelectedListener(
@@ -133,15 +147,30 @@ public class MainActivity extends AppCompatActivity
         viewPager.setCurrentItem(2);
 
         //跳转登录界面
-        View headerLayout = navigationView.getHeaderView(0);
-        TextView userText = headerLayout.findViewById(R.id.nav_header_userText);
-        userText.setOnClickListener(new View.OnClickListener() {
+        userNameText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                 startActivity(intent);
             }
         });
+
+        LitePal.initialize(MyApplication.getContext());
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        LitePal.getDatabase();
+        List<LoginUser> books = LitePal.where("status = ?", "1").find(LoginUser.class);
+
+        if (books.size() > 0) {
+            Log.d("MainActivity", "已经登录");
+            haveLogin = true;
+            userNameText.setText(books.get(0).getNickName());
+            userAccountText.setText("ID:" + books.get(0).getAccount());
+        }
     }
 
     //工具栏溢出区
@@ -166,7 +195,7 @@ public class MainActivity extends AppCompatActivity
     //溢出区菜单项
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.add_friend:
                 Toast.makeText(this, "我是第一个", Toast.LENGTH_SHORT).show();
                 break;

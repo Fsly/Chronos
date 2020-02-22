@@ -6,5 +6,6 @@
 
     <list>
         <mapping class="com.example.chronos.database.User" />
+        <mapping class="com.example.chronos.database.LoginUser" />
     </list>
 </litepal>
