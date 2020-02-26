@@ -154,8 +154,6 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             }
         });
-
-        LitePal.initialize(MyApplication.getContext());
     }
 
     @Override
