@@ -5,6 +5,8 @@ import android.content.Context;
 
 import org.litepal.LitePal;
 
+import androidx.multidex.MultiDex;
+
 public class MyApplication extends Application {
     private static Context context;
     @Override
@@ -12,6 +14,7 @@ public class MyApplication extends Application {
         super.onCreate();
         context = getApplicationContext();
         LitePal.initialize(this);
+        MultiDex.install(this);
     }
     public static Context getContext() {
         return context;
